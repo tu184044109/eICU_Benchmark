@@ -1,3 +1,9 @@
 *.json
 *.csv
 *.pyc
+*.zip
+*.gz
+*.txt
+eicu-collaborative-research-database-2.0/
+extracted_files/
+__pycache__/

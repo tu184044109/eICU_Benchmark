@@ -13,13 +13,16 @@ from sklearn.externals.joblib import dump, load
 
 
 def dataframe_from_csv(path, header=0, index_col=False):
-    return pd.read_csv(path, header=header, index_col=index_col)
+    # return pd.read_csv(path, header=header, index_col=index_col)  # out-of-memory issue
+    df = pd.DataFrame()
+    for chunk in pd.read_csv(path, header=header, index_col=index_col, chunksize=10000):
+        df = pd.concat([df, chunk], ignore_index=True)
+    return df
 
 
 var_to_consider = ['glucose', 'Invasive BP Diastolic', 'Invasive BP Systolic',
                    'O2 Saturation', 'Respiratory Rate', 'Motor', 'Eyes', 'MAP (mmHg)',
                    'Heart Rate', 'GCS Total', 'Verbal', 'pH', 'FiO2', 'Temperature (C)']
-
 
 
 #Filter on useful column for this benchmark
@@ -112,7 +115,8 @@ def filter_one_unit_stay(patients):
 #Filter on useful columns from patient table
 def filter_patients_on_columns(patients):
     columns = ['patientunitstayid', 'gender', 'age', 'ethnicity', 'apacheadmissiondx',
-               'hospitaladmityear', 'hospitaldischargeyear', 'hospitaldischargeoffset',
+            #    'hospitaladmityear', 
+               'hospitaldischargeyear', 'hospitaldischargeoffset',
 
                'admissionheight', 'hospitaladmitoffset', 'admissionweight',
                'hospitaldischargestatus', 'unitdischargeoffset', 'unitdischargestatus']
